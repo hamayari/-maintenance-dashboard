@@ -14,10 +14,6 @@ from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
-import pymysql
-
-# Installer pymysql comme MySQLdb
-pymysql.install_as_MySQLdb()
 
 app = Flask(__name__)
 CORS(app)
@@ -27,11 +23,16 @@ UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'xlsx', 'xls'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
-app.config['JWT_SECRET_KEY'] = 'votre-cle-secrete-super-securisee-2024'  # Changez en production
+app.config['JWT_SECRET_KEY'] = os.environ.get('SECRET_KEY', 'votre-cle-secrete-super-securisee-2024')
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=24)
 
-# Charger la configuration MySQL depuis config.py
-app.config.from_pyfile('config.py')
+# Charger la configuration selon l'environnement
+if os.environ.get('DATABASE_URL'):
+    # Production: utiliser config_prod.py
+    app.config.from_pyfile('config_prod.py')
+else:
+    # Développement: utiliser config.py (MySQL local)
+    app.config.from_pyfile('config.py')
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
