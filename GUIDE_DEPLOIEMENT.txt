@@ -1,0 +1,210 @@
+═══════════════════════════════════════════════════════════════
+    GUIDE COMPLET: HÉBERGER TON PROJET EN LIGNE
+═══════════════════════════════════════════════════════════════
+
+📋 TABLE DES MATIÈRES:
+1. Préparer le projet
+2. Héberger le Backend (Render)
+3. Héberger le Frontend (Netlify)
+4. Configurer la base de données
+5. Tester le projet en ligne
+
+═══════════════════════════════════════════════════════════════
+PARTIE 1: PRÉPARER LE PROJET
+═══════════════════════════════════════════════════════════════
+
+✅ ÉTAPE 1.1: Créer un compte GitHub (si tu n'en as pas)
+   1. Va sur: https://github.com
+   2. Clique sur "Sign up"
+   3. Crée ton compte
+
+✅ ÉTAPE 1.2: Installer Git (si pas installé)
+   1. Télécharge: https://git-scm.com/download/win
+   2. Installe avec les options par défaut
+
+✅ ÉTAPE 1.3: Créer un dépôt GitHub
+   1. Va sur GitHub
+   2. Clique sur "New repository"
+   3. Nom: "maintenance-dashboard"
+   4. Public ou Private (ton choix)
+   5. Clique "Create repository"
+
+✅ ÉTAPE 1.4: Pousser ton code sur GitHub
+   Ouvre un terminal dans ton dossier projet et tape:
+
+   git init
+   git add .
+   git commit -m "Initial commit"
+   git branch -M main
+   git remote add origin https://github.com/TON_USERNAME/maintenance-dashboard.git
+   git push -u origin main
+
+   (Remplace TON_USERNAME par ton nom d'utilisateur GitHub)
+
+═══════════════════════════════════════════════════════════════
+PARTIE 2: HÉBERGER LE BACKEND (RENDER - GRATUIT)
+═══════════════════════════════════════════════════════════════
+
+✅ ÉTAPE 2.1: Créer un compte Render
+   1. Va sur: https://render.com
+   2. Clique "Get Started"
+   3. Connecte-toi avec GitHub
+
+✅ ÉTAPE 2.2: Créer une base de données MySQL
+   1. Dans Render Dashboard, clique "New +"
+   2. Sélectionne "PostgreSQL" (gratuit)
+   3. Nom: maintenance-db
+   4. Database: maintenance_db
+   5. User: (laisse par défaut)
+   6. Region: Frankfurt (le plus proche)
+   7. Clique "Create Database"
+   8. ⚠️ COPIE l'URL de connexion (tu en auras besoin)
+
+✅ ÉTAPE 2.3: Déployer le Backend
+   1. Clique "New +" → "Web Service"
+   2. Connecte ton dépôt GitHub
+   3. Sélectionne "maintenance-dashboard"
+   4. Configuration:
+      - Name: maintenance-backend
+      - Region: Frankfurt
+      - Branch: main
+      - Root Directory: backend
+      - Runtime: Python 3
+      - Build Command: pip install -r requirements.txt
+      - Start Command: gunicorn app:app
+   5. Variables d'environnement (Add Environment Variable):
+      - DATABASE_URL: (colle l'URL de ta base de données)
+      - SECRET_KEY: (génère une clé aléatoire)
+   6. Clique "Create Web Service"
+   7. ⏳ Attends 5-10 minutes (le déploiement)
+   8. ✅ Ton backend sera sur: https://maintenance-backend.onrender.com
+
+═══════════════════════════════════════════════════════════════
+PARTIE 3: HÉBERGER LE FRONTEND (NETLIFY - GRATUIT)
+═══════════════════════════════════════════════════════════════
+
+✅ ÉTAPE 3.1: Créer un compte Netlify
+   1. Va sur: https://www.netlify.com
+   2. Clique "Sign up"
+   3. Connecte-toi avec GitHub
+
+✅ ÉTAPE 3.2: Déployer le Frontend
+   1. Clique "Add new site" → "Import an existing project"
+   2. Sélectionne "GitHub"
+   3. Choisis ton dépôt "maintenance-dashboard"
+   4. Configuration:
+      - Base directory: frontend
+      - Build command: npm run build
+      - Publish directory: frontend/dist
+   5. Variables d'environnement:
+      - VITE_API_URL: https://maintenance-backend.onrender.com/api
+   6. Clique "Deploy site"
+   7. ⏳ Attends 2-3 minutes
+   8. ✅ Ton frontend sera sur: https://ton-site.netlify.app
+
+✅ ÉTAPE 3.3: Personnaliser le nom de domaine
+   1. Dans Netlify, va dans "Site settings"
+   2. "Domain management" → "Options" → "Edit site name"
+   3. Change en: maintenance-dashboard
+   4. Ton site sera: https://maintenance-dashboard.netlify.app
+
+═══════════════════════════════════════════════════════════════
+PARTIE 4: CONFIGURER LA BASE DE DONNÉES
+═══════════════════════════════════════════════════════════════
+
+⚠️ IMPORTANT: Modifier le backend pour PostgreSQL (Render utilise PostgreSQL)
+
+Dans backend/app.py, change:
+   import pymysql
+   pymysql.install_as_MySQLdb()
+
+Par:
+   # Pas besoin pour PostgreSQL
+
+Et dans requirements.txt, ajoute:
+   psycopg2-binary==2.9.9
+
+Puis dans config.py, utilise:
+   SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+
+═══════════════════════════════════════════════════════════════
+PARTIE 5: TESTER LE PROJET EN LIGNE
+═══════════════════════════════════════════════════════════════
+
+✅ ÉTAPE 5.1: Tester le Backend
+   1. Va sur: https://maintenance-backend.onrender.com/api/test
+   2. Tu devrais voir: {"message": "Backend fonctionne", "status": "OK"}
+
+✅ ÉTAPE 5.2: Tester le Frontend
+   1. Va sur: https://maintenance-dashboard.netlify.app
+   2. Tu devrais voir la page de login
+   3. Connecte-toi avec: admin@test.com / admin123
+
+✅ ÉTAPE 5.3: Créer le compte admin
+   Si le compte admin n'existe pas:
+   1. Va sur la page Register
+   2. Crée un compte admin
+   3. Ou utilise l'API directement
+
+═══════════════════════════════════════════════════════════════
+OPTION ALTERNATIVE: HEROKU (PAYANT MAIS PLUS SIMPLE)
+═══════════════════════════════════════════════════════════════
+
+Si tu veux payer (~7$/mois), Heroku est plus simple:
+
+1. Crée un compte sur: https://heroku.com
+2. Installe Heroku CLI
+3. Dans ton terminal:
+   
+   cd backend
+   heroku login
+   heroku create maintenance-backend
+   heroku addons:create cleardb:ignite
+   git push heroku main
+
+4. Pour le frontend, même chose avec Netlify
+
+═══════════════════════════════════════════════════════════════
+RÉSUMÉ DES URLS
+═══════════════════════════════════════════════════════════════
+
+Backend:  https://maintenance-backend.onrender.com
+Frontend: https://maintenance-dashboard.netlify.app
+GitHub:   https://github.com/TON_USERNAME/maintenance-dashboard
+
+═══════════════════════════════════════════════════════════════
+COÛTS
+═══════════════════════════════════════════════════════════════
+
+✅ Render (Backend + DB):  GRATUIT (avec limitations)
+✅ Netlify (Frontend):     GRATUIT (100GB/mois)
+✅ GitHub:                 GRATUIT
+
+Total: 0€/mois ! 🎉
+
+═══════════════════════════════════════════════════════════════
+LIMITATIONS VERSION GRATUITE
+═══════════════════════════════════════════════════════════════
+
+⚠️ Render gratuit:
+   - Le serveur s'endort après 15 min d'inactivité
+   - Premier chargement peut prendre 30 secondes
+   - 750h/mois (suffisant pour un projet étudiant)
+
+⚠️ Netlify gratuit:
+   - 100GB bande passante/mois
+   - 300 minutes de build/mois
+   - Largement suffisant !
+
+═══════════════════════════════════════════════════════════════
+BESOIN D'AIDE ?
+═══════════════════════════════════════════════════════════════
+
+Si tu rencontres un problème:
+1. Vérifie les logs dans Render Dashboard
+2. Vérifie les logs dans Netlify Dashboard
+3. Vérifie que l'URL du backend est correcte dans le frontend
+
+═══════════════════════════════════════════════════════════════
+FIN DU GUIDE
+═══════════════════════════════════════════════════════════════
