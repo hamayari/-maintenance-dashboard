@@ -22,7 +22,7 @@ import CIcon from '@coreui/icons-react'
 import { cilWarning, cilSearch, cilFilter, cilX, cilClock } from '@coreui/icons'
 import axios from 'axios'
 
-const API_URL = 'http://localhost:5000/api'
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 
 const Pannes = () => {
   const [pannes, setPannes] = useState([])
