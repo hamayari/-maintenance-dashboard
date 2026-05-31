@@ -256,8 +256,6 @@ Frontend runs on `http://localhost:3000`
 
 **Mohamed Amine Ayari**
 - GitHub: [@hamayari](https://github.com/hamayari)
-- LinkedIn: [Your LinkedIn](https://linkedin.com/in/yourprofile)
-- Email: your.email@example.com
 
 ---
 
